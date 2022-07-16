@@ -1,0 +1,45 @@
+{
+  "name": "kg-real-estate-advisor",
+  "version": "0.0.0",
+  "description": "This Project intends to create a KnowledgeGraph to analyze flats in Vienna.",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "nodemon -w ./src -e 'ts tsx' --exec 'ts-node src/main.ts'",
+    "start": "ts-node src/main.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kglab-tuwien/your-project-real-estate-advisor.git"
+  },
+  "keywords": [
+    "real",
+    "estate",
+    "advisor",
+    "kg",
+    "knowlegde",
+    "graph"
+  ],
+  "author": "https://github.com/websi96, https://github.com/Akaiyo, https://github.com/LikedByDarkness, https://github.com/GiuseTripodi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kglab-tuwien/your-project-real-estate-advisor/issues"
+  },
+  "homepage": "https://github.com/kglab-tuwien/your-project-real-estate-advisor#readme",
+  "dependencies": {
+    "@fastify/static": "^6.3.0",
+    "dotenv": "^16.0.1",
+    "fastify": "^4.0.0-rc.2",
+    "fastify-plugin": "^3.0.1",
+    "mongodb": "4.5",
+    "mongoose": "^6.3.2",
+    "neo4j-driver": "^4.4.5",
+    "python-shell": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.31",
+    "nodemon": "^2.0.16",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
+  }
+}

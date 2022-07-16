@@ -1,0 +1,82 @@
+version: "3.9"
+services:
+  backend:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Update 'VARIANT' to pick an LTS version of Node.js: 18, 16, 14, 12.
+        # Append -bullseye or -buster to pin to an OS version.
+        # Use -bullseye variants on local arm64/Apple Silicon.
+        VARIANT: 18-bullseye
+    volumes:
+      - /workspace/node_modules/
+      - /workspace/dist/
+      - .:/workspace:cached
+    command: sleep infinity
+    networks:
+      - backend
+    ports:
+      - 8080:8080
+
+  juypterlab:
+    image: jupyter/datascience-notebook:python-3.9.10
+    volumes:
+    - jupyterlab:/home/jovyan
+    - ./:/home/jovyan/workspace:cached
+    ports:
+      - 8888:8888
+    command: "start-notebook.sh --NotebookApp.token='' --NotebookApp.password='' --FileCheckpoints.checkpoint_dir='/home/jovyan/.jupyter_checkpoints'"
+    networks:
+      - backend
+
+  setup-mongo:
+    image: busybox
+    command: echo "THIS WOULD OVERRIDE THE MONGODB DATA ON EACH START =>" #unzip -o /data/data.zip -d /data
+    volumes:
+      - ./mongo/init/data:/data
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo/init:/docker-entrypoint-initdb.d
+      - ./mongo/init/data:/tmp/data
+    networks:
+      - backend
+    depends_on:
+      - setup-mongo
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    networks:
+      - backend
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/
+    depends_on:
+      - mongo
+
+  neo4j:
+    image: neo4j
+    restart: always
+    ports:
+      - 7474:7474
+      - 7687:7687
+    environment:
+      - NEO4J_AUTH=none
+      - NEO4J_dbms_connector_bolt_thread__pool__min__size=10 #5
+      - NEO4J_dbms_connector_bolt_thread__pool__max__size=1000 #400
+      - NEO4J_apoc_export_file_enabled=true
+    volumes:
+     - neo4j:/data
+    networks:
+      - backend
+
+networks:
+  backend: {}
+volumes:
+  jupyterlab: {}
+  neo4j: {}
